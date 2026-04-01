@@ -1,19 +1,24 @@
 'use client'
 
-import { useState, use } from 'react'
+import { useState, use, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { MenuItem } from '@/types'
-
-const mockMenuItems: MenuItem[] = [
-  { id: '1', name: 'Barbecue Salad', category: 'Food', price: 22000, description: 'Delicious dish', image_url: '/assets/img/plate1.png' },
-  { id: '2', name: 'Salad with Fish', category: 'Food', price: 35000, description: 'Delicious dish', image_url: '/assets/img/plate2.png' },
-  { id: '3', name: 'Spinach Salad', category: 'Food', price: 25000, description: 'Delicious dish', image_url: '/assets/img/plate3.png' },
-]
+import { supabase } from '@/lib/supabaseClient'
 
 export default function TableMenuPage({ params }: { params: Promise<{ tableId: string }> }) {
   const { tableId } = use(params)
   const [cart, setCart] = useState<{item: MenuItem, quantity: number}[]>([])
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadMenu() {
+      const { data } = await supabase.from('menu_items').select('*')
+      if (data) setMenuItems(data as MenuItem[])
+      setLoading(false)
+    }
+    loadMenu()
+  }, [])
 
   const addToCart = (item: MenuItem) => {
     setCart(prev => {
@@ -42,17 +47,23 @@ export default function TableMenuPage({ params }: { params: Promise<{ tableId: s
         <h2 className="section-title mt-8">Table {tableId} Menu</h2>
         
         <div className="menu__container bd-grid mt-4">
-          {mockMenuItems.map(item => (
-            <div key={item.id} className="menu__content">
-                <img src={item.image_url} alt={item.name} className="menu__img" />
-                <h3 className="menu__name">{item.name}</h3>
-                <span className="menu__detail">{item.description}</span>
-                <span className="menu__preci">Rp {item.price.toLocaleString()}</span>
-                <button onClick={() => addToCart(item)} className="button menu__button cursor-pointer">
-                  <i className='bx bx-cart-alt'></i>
-                </button>
-            </div>
-          ))}
+          {loading ? (
+            <p className="text-center col-span-full">Loading menu...</p>
+          ) : menuItems.length === 0 ? (
+            <p className="text-center col-span-full">Menu is currently empty.</p>
+          ) : (
+            menuItems.map((item: MenuItem) => (
+              <div key={item.id} className="menu__content">
+                  <img src={item.image_url} alt={item.name} className="menu__img" />
+                  <h3 className="menu__name">{item.name}</h3>
+                  <span className="menu__detail">{item.description}</span>
+                  <span className="menu__preci">Rp {item.price.toLocaleString()}</span>
+                  <button onClick={() => addToCart(item)} className="button menu__button cursor-pointer">
+                    <i className='bx bx-cart-alt'></i>
+                  </button>
+              </div>
+            ))
+          )}
         </div>
 
         {cart.length > 0 && (

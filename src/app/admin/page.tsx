@@ -1,20 +1,35 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Order, OrderStatus } from '@/types'
-
-// Mock Data
-const mockOrders: Order[] = [
-  { id: 'ORD-A1B2C3', table_id: '01', total_amount: 57000, status: 'Pending', payment_status: 'Paid', created_at: new Date().toISOString() },
-  { id: 'ORD-X9Y8Z7', table_id: '03', total_amount: 82000, status: 'Cooking', payment_status: 'Paid', created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString() },
-  { id: 'ORD-L4M5N6', table_id: '02', total_amount: 25000, status: 'Ready', payment_status: 'Paid', created_at: new Date(Date.now() - 1000 * 60 * 35).toISOString() },
-]
+import { supabase } from '@/lib/supabaseClient'
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<Order[]>(mockOrders)
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const updateStatus = (orderId: string, newStatus: OrderStatus) => {
+  const fetchOrders = async () => {
+    const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false })
+    if (data) setOrders(data as Order[])
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchOrders()
+    // Set up a simple poll every 10 seconds for prototype purposes
+    const interval = setInterval(fetchOrders, 10000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const updateStatus = async (orderId: string, newStatus: OrderStatus) => {
+    // Optimistic update
     setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o))
+    
+    const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId)
+    if (error) {
+      alert('Error updating status: ' + error.message)
+      fetchOrders() // revert
+    }
   }
 
   const getStatusColor = (status: OrderStatus) => {

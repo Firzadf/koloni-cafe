@@ -1,39 +1,60 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MenuItem } from '@/types'
-
-const initialMenuItems: MenuItem[] = [
-  { id: '1', name: 'Barbecue Salad', category: 'Food', price: 22000, description: 'Delicious dish', image_url: '/assets/img/plate1.png' },
-  { id: '2', name: 'Salad with Fish', category: 'Food', price: 35000, description: 'Delicious dish', image_url: '/assets/img/plate2.png' },
-  { id: '3', name: 'Spinach Salad', category: 'Food', price: 25000, description: 'Delicious dish', image_url: '/assets/img/plate3.png' },
-]
+import { supabase } from '@/lib/supabaseClient'
 
 export default function AdminMenuPage() {
-  const [items, setItems] = useState<MenuItem[]>(initialMenuItems)
-  const [isEditing, setIsEditing] = useState(false)
+  const [items, setItems] = useState<MenuItem[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const handleDelete = (id: string) => {
+  const fetchMenu = async () => {
+    const { data } = await supabase.from('menu_items').select('*')
+    if (data) setItems(data as MenuItem[])
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchMenu()
+  }, [])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this menu item?')) return;
+    
+    // Optimistic update
     setItems(items.filter(item => item.id !== id))
+    
+    const { error } = await supabase.from('menu_items').delete().eq('id', id)
+    if (error) {
+      alert('Delete failed: ' + error.message)
+      fetchMenu() // Revert
+    }
   }
 
   const handleEdit = (id: string) => {
-    setIsEditing(true)
-    // Prototype: In a real app, open a modal with the item data
     alert('Opening Edit Modal for Item: ' + id)
   }
 
-  const handleAdd = () => {
-    // Prototype: In a real app, open an empty modal to add new item
-    const newItem: MenuItem = {
-      id: Math.random().toString(36).substr(2, 6),
-      name: 'New Menu Item',
+  const handleAdd = async () => {
+    const name = prompt('Menu Name')
+    if (!name) return
+    const priceStr = prompt('Price (number)')
+    if (!priceStr) return
+    
+    const newItem = {
+      name,
       category: 'Food',
-      price: 15000,
+      price: parseInt(priceStr, 10),
       description: 'New dish description',
       image_url: '/assets/img/plate1.png'
     }
-    setItems([...items, newItem])
+
+    const { data, error } = await supabase.from('menu_items').insert(newItem).select().single()
+    if (error) {
+      alert('Failed to add item: ' + error.message)
+    } else if (data) {
+      setItems([...items, data as MenuItem])
+    }
   }
 
   return (

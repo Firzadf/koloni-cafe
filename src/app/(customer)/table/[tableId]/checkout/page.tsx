@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { MenuItem } from '@/types'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function CheckoutPage({ params }: { params: Promise<{ tableId: string }> }) {
   const { tableId } = use(params)
@@ -14,6 +15,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ tableId: st
   const [cart, setCart] = useState<{item: MenuItem, quantity: number}[]>([])
   const [isPaid, setIsPaid] = useState(false)
   const [orderId, setOrderId] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
     if (cartQuery) {
@@ -28,9 +30,23 @@ export default function CheckoutPage({ params }: { params: Promise<{ tableId: st
   const total = cart.reduce((sum, current) => sum + (current.item.price * current.quantity), 0)
 
   const handlePayment = async () => {
-    // Simulate API call to save order
-    // In actual implementation, we'd save to Supabase here
+    setIsProcessing(true)
     const mockId = 'ORD-' + Math.random().toString(36).substr(2, 6).toUpperCase()
+    
+    const { error } = await supabase.from('orders').insert({
+      id: mockId,
+      table_id: tableId,
+      total_amount: total,
+      status: 'Pending',
+      payment_status: 'Paid'
+    })
+
+    setIsProcessing(false)
+    if (error) {
+      alert('Failed to place order: ' + error.message)
+      return
+    }
+
     setOrderId(mockId)
     setIsPaid(true)
   }
