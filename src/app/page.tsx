@@ -1,10 +1,22 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import { MenuItem } from '@/types'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function LandingPage() {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadMenu() {
+      const { data } = await supabase.from('menu_items').select('*').limit(3)
+      if (data) setMenuItems(data as MenuItem[])
+      setLoading(false)
+    }
+    loadMenu()
+  }, [])
   useEffect(() => {
     // Basic show menu toggle from template's main.js
     const toggleMenu = () => {
@@ -88,29 +100,21 @@ export default function LandingPage() {
               <h2 className="section-title">Menu of the week</h2>
 
               <div className="menu__container bd-grid">
-                  <div className="menu__content">
-                      <img src="/assets/img/plate1.png" alt="" className="menu__img" />
-                      <h3 className="menu__name">Barbecue salad</h3>
-                      <span className="menu__detail">Delicious dish</span>
-                      <span className="menu__preci">Rp 22.000</span>
-                      <Link href="/table/01" className="button menu__button"><i className='bx bx-cart-alt'></i></Link>
-                  </div>
-
-                  <div className="menu__content">
-                      <img src="/assets/img/plate2.png" alt="" className="menu__img" />
-                      <h3 className="menu__name">Salad with fish</h3>
-                      <span className="menu__detail">Delicious dish</span>
-                      <span className="menu__preci">Rp 35.000</span>
-                      <Link href="/table/01" className="button menu__button"><i className='bx bx-cart-alt'></i></Link>
-                  </div>
-                  
-                  <div className="menu__content">
-                      <img src="/assets/img/plate3.png" alt="" className="menu__img" />
-                      <h3 className="menu__name">Spinach salad</h3>
-                      <span className="menu__detail">Delicious dish</span>
-                      <span className="menu__preci">Rp 25.000</span>
-                      <Link href="/table/01" className="button menu__button"><i className='bx bx-cart-alt'></i></Link>
-                  </div>
+                  {loading ? (
+                    <p className="text-center col-span-full">Loading menu preview...</p>
+                  ) : menuItems.length === 0 ? (
+                    <p className="text-center col-span-full">Menu preview is empty.</p>
+                  ) : (
+                    menuItems.map(item => (
+                      <div key={item.id} className="menu__content">
+                          <img src={item.image_url} alt={item.name} className="menu__img" />
+                          <h3 className="menu__name">{item.name}</h3>
+                          <span className="menu__detail">{item.description}</span>
+                          <span className="menu__preci">Rp {item.price.toLocaleString()}</span>
+                          <Link href="/table/01" className="button menu__button"><i className='bx bx-cart-alt'></i></Link>
+                      </div>
+                    ))
+                  )}
               </div>
           </section>
 
