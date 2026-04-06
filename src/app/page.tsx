@@ -11,7 +11,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     async function loadMenu() {
-      const { data } = await supabase.from('menu_items').select('*').limit(3)
+      const { data } = await supabase.from('menu_items').select('*').limit(9)
       if (data) setMenuItems(data as MenuItem[])
       setLoading(false)
     }
@@ -48,12 +48,16 @@ export default function LandingPage() {
       {/*========== HEADER ==========*/}
       <header className="l-header" id="header">
           <nav className="nav bd-container">
-              <Link href="#" className="nav__logo">Koloni Space</Link>
+              <Link href="#" className="nav__logo flex items-center gap-2">
+                  <img src="/assets/img/logo/koloni-logo.jpg" alt="Koloni Logo" className="h-5 w-5 object-cover rounded-full" />
+                  Koloni
+              </Link>
 
               <div className="nav__menu" id="nav-menu">
                   <ul className="nav__list">
                       <li className="nav__item"><Link href="#home" className="nav__link active-link">Home</Link></li>
                       <li className="nav__item"><Link href="#about" className="nav__link">About</Link></li>
+                      <li className="nav__item"><Link href="#gallery" className="nav__link">Gallery</Link></li>
                       <li className="nav__item"><Link href="#menu" className="nav__link">Menu</Link></li>
                       <li className="nav__item"><Link href="#contact" className="nav__link">Contact</Link></li>
                       <li><i className='bx bx-moon change-theme' id="theme-button"></i></li>
@@ -72,7 +76,8 @@ export default function LandingPage() {
               <div className="home__container bd-container bd-grid">
                   <div className="home__data">
                       <h1 className="home__title">Koloni Food<br/>& Space</h1>
-                      <h2 className="home__subtitle">Welcome to the best cafe <br/> in town.</h2>
+                      <h2 className="home__subtitle text-2xl font-semibold mb-2">A Hidden Escape <br/> in the Heart of Nature.</h2>
+                      <p className="mb-6 text-gray-600 max-w-lg">Step away from the city's hustle and embrace the blend of subtle flavors and natural tranquility of Situgede Ecotourism.</p>
                       <Link href="#menu" className="button">View Menu</Link>
                   </div>
   
@@ -84,13 +89,57 @@ export default function LandingPage() {
           <section className="about section bd-container" id="about">
               <div className="about__container  bd-grid">
                   <div className="about__data">
-                      <span className="section-subtitle about__initial">About us</span>
-                      <h2 className="section-title about__initial">We serve the best <br/> coffee and food</h2>
-                      <p className="about__description">Relax and enjoy our curated menu with a great atmosphere. Perfect for hanging out or working.</p>
-                      <Link href="#" className="button">Explore history</Link>
+                      <span className="section-subtitle about__initial">Our Story</span>
+                      <h2 className="section-title about__initial">More Than Just a <br/> Stopover</h2>
+                      <p className="about__description text-justify">
+                        Hidden within the lush tranquility of Situgede Ecotourism, Koloni Food & Space serves not just as a cafe, but as a momentary escape to recharge. We believe that warm conversations, delicious food, and fresh air are the perfect combination everyone covets.
+                        <br/><br/>
+                        True to the name "Koloni", this place is designed as a communal space for everyone—whether for focused work, relaxing with family, or enjoying an afternoon with close friends. Surrounded by trees and a natural ambiance, Koloni offers a hidden gem experience that makes you feel far from the city noise, even when you're so close.
+                        <br/><br/>
+                        From our legendary Koloniers Coffee to an appetizing array of ricebowls and snacks, every dish is prepared to complement your relaxing moments here.
+                      </p>
                   </div>
 
-                  <img src="/assets/img/about.jpg" alt="" className="about__img" />
+                  <img src="/assets/img/about.jpg" alt="About Koloni" className="about__img rounded-xl shadow-md" />
+              </div>
+          </section>
+
+          {/*========== FEATURES ==========*/}
+          <section className="services section bd-container" id="services">
+              <span className="section-subtitle">Why Koloni?</span>
+              <h2 className="section-title">What We Offer</h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 px-4">
+                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center">
+                      <i className='bx bx-leaf text-4xl text-[var(--first-color)] mb-4'></i>
+                      <h3 className="text-xl font-bold mb-2 text-gray-800">Hidden Place</h3>
+                      <p className="text-gray-600 text-sm">Located within Situgede Ecotourism, offering tranquility and fresh air that blends with nature. A momentary healing spot that's easily within reach.</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center">
+                      <i className='bx bx-coffee-togo text-4xl text-[var(--first-color)] mb-4'></i>
+                      <h3 className="text-xl font-bold mb-2 text-gray-800">Comfort Drink & Food</h3>
+                      <p className="text-gray-600 text-sm">Serving a wide selection, from legendary coffee blends to hearty ricebowls and snacks designed to satisfy both your heart and craving.</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center">
+                      <i className='bx bx-group text-4xl text-[var(--first-color)] mb-4'></i>
+                      <h3 className="text-xl font-bold mb-2 text-gray-800">Communal Space</h3>
+                      <p className="text-gray-600 text-sm">A comfortable and spacious area built to become a gathering place, share stories, or simply to enjoy a serene me-time.</p>
+                  </div>
+              </div>
+          </section>
+
+          {/*========== GALLERY ==========*/}
+          <section className="gallery section bd-container" id="gallery">
+              <span className="section-subtitle">Visuals</span>
+              <h2 className="section-title">Gallery</h2>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+                  <img src="/assets/img/gallery/koloni1.jpg" alt="Gallery 1" className="w-full h-48 object-cover rounded-xl shadow-sm hover:scale-105 transition-transform" />
+                  <img src="/assets/img/gallery/koloni2.jpg" alt="Gallery 2" className="w-full h-48 object-cover rounded-xl shadow-sm hover:scale-105 transition-transform" />
+                  <img src="/assets/img/gallery/koloni3.jpg" alt="Gallery 3" className="w-full h-48 object-cover rounded-xl shadow-sm hover:scale-105 transition-transform" />
+                  <img src="/assets/img/gallery/koloni4.jpg" alt="Gallery 4" className="w-full h-48 object-cover rounded-xl shadow-sm hover:scale-105 transition-transform" />
+                  <img src="/assets/img/gallery/koloni5.jpg" alt="Gallery 5" className="w-full h-48 object-cover rounded-xl shadow-sm hover:scale-105 transition-transform" />
+                  <img src="/assets/img/gallery/koloni6.jpg" alt="Gallery 6" className="w-full h-48 object-cover rounded-xl shadow-sm hover:scale-105 transition-transform" />
               </div>
           </section>
 
@@ -138,7 +187,10 @@ export default function LandingPage() {
       <footer className="footer section bd-container">
           <div className="footer__container bd-grid">
               <div className="footer__content">
-                  <Link href="#" className="footer__logo">Koloni Space</Link>
+                  <Link href="#" className="footer__logo flex items-center gap-2 mb-4">
+                      <img src="/assets/img/logo/koloni-logo.jpg" alt="Koloni Logo" className="h-5 w-5 object-cover rounded-full" />
+                      Koloni
+                  </Link>
                   <span className="footer__description">Cafe & Co-working</span>
                   <div>
                       <Link href="#" className="footer__social"><i className='bx bxl-facebook'></i></Link>
