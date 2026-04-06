@@ -39,7 +39,8 @@ export default function AdminMenuPage() {
     setItems(items.filter(item => item.id !== id))
     
     try {
-      await adminDeleteMenu(id)
+      const delResult = await adminDeleteMenu(id)
+      if (!delResult?.success) throw new Error(delResult?.error)
       
       // Optional: Delete image from storage
       if (imageUrl && imageUrl.includes('supabase.co')) {
@@ -90,7 +91,9 @@ export default function AdminMenuPage() {
         formData.append('file', imageFile)
         formData.append('filePath', fileName)
 
-        finalImageUrl = await adminUploadImage(formData)
+        const uploadResult = await adminUploadImage(formData)
+        if (!uploadResult?.success || !uploadResult.url) throw new Error(uploadResult?.error || 'Unknown upload error')
+        finalImageUrl = uploadResult.url
       }
 
       // 2. Set Fallback Image if absolutely none provided
@@ -99,12 +102,13 @@ export default function AdminMenuPage() {
       const payload = {
         name,
         category,
-        price: parseInt(price, 10),
+        price: parseInt(price, 10) || 0,
         description,
         image_url: finalImageUrl
       }
 
-      await adminSaveMenu(payload, editingId)
+      const saveResult = await adminSaveMenu(payload, editingId)
+      if (!saveResult?.success) throw new Error(saveResult?.error || 'Unknown error')
 
       await fetchMenu() // Refresh List
       closeModal()

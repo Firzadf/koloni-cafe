@@ -8,38 +8,66 @@ const getAdminSupabase = () => createClient(
 )
 
 export async function adminUploadImage(formData: FormData) {
-  const file = formData.get('file') as File
-  const filePath = formData.get('filePath') as string
+  try {
+    const file = formData.get('file') as File
+    const filePath = formData.get('filePath') as string
 
-  const supabase = getAdminSupabase()
-  const { error } = await supabase.storage.from('menu-images').upload(filePath, file)
-  
-  if (error) throw new Error(error.message)
-  
-  const { data } = supabase.storage.from('menu-images').getPublicUrl(filePath)
-  return data.publicUrl
+    if (!file) throw new Error('No file provided')
+
+    // Convert file to Buffer for Vercel/Node environment compatibility
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+
+    const supabase = getAdminSupabase()
+    const { error } = await supabase.storage.from('menu-images').upload(filePath, buffer, {
+      contentType: file.type,
+      upsert: true
+    })
+    
+    if (error) throw new Error(error.message)
+    
+    const { data } = supabase.storage.from('menu-images').getPublicUrl(filePath)
+    return { success: true, url: data.publicUrl }
+  } catch (err: any) {
+    return { success: false, error: err.message }
+  }
 }
 
 export async function adminDeleteImage(filePath: string) {
-  const supabase = getAdminSupabase()
-  const { error } = await supabase.storage.from('menu-images').remove([filePath])
-  if (error) throw new Error(error.message)
+  try {
+    const supabase = getAdminSupabase()
+    const { error } = await supabase.storage.from('menu-images').remove([filePath])
+    if (error) throw new Error(error.message)
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err.message }
+  }
 }
 
 export async function adminSaveMenu(payload: any, editingId: string | null) {
-  const supabase = getAdminSupabase()
-  
-  if (editingId) {
-    const { error } = await supabase.from('menu_items').update(payload).eq('id', editingId)
-    if (error) throw new Error(error.message)
-  } else {
-    const { error } = await supabase.from('menu_items').insert(payload)
-    if (error) throw new Error(error.message)
+  try {
+    const supabase = getAdminSupabase()
+    
+    if (editingId) {
+      const { error } = await supabase.from('menu_items').update(payload).eq('id', editingId)
+      if (error) throw new Error(error.message)
+    } else {
+      const { error } = await supabase.from('menu_items').insert(payload)
+      if (error) throw new Error(error.message)
+    }
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err.message }
   }
 }
 
 export async function adminDeleteMenu(id: string) {
-  const supabase = getAdminSupabase()
-  const { error } = await supabase.from('menu_items').delete().eq('id', id)
-  if (error) throw new Error(error.message)
+  try {
+    const supabase = getAdminSupabase()
+    const { error } = await supabase.from('menu_items').delete().eq('id', id)
+    if (error) throw new Error(error.message)
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err.message }
+  }
 }
