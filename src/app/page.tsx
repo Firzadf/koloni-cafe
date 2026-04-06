@@ -8,6 +8,28 @@ import { supabase } from '@/lib/supabaseClient'
 export default function LandingPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+
+  useEffect(() => {
+    // Determine theme from localStorage
+    const savedTheme = localStorage.getItem('selected-theme')
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true)
+      document.body.classList.add('dark-theme')
+    }
+  }, [])
+
+  const toggleTheme = () => {
+    const newMode = !isDarkMode
+    setIsDarkMode(newMode)
+    if (newMode) {
+      document.body.classList.add('dark-theme')
+      localStorage.setItem('selected-theme', 'dark')
+    } else {
+      document.body.classList.remove('dark-theme')
+      localStorage.setItem('selected-theme', 'light')
+    }
+  }
 
   useEffect(() => {
     async function loadMenu() {
@@ -60,7 +82,7 @@ export default function LandingPage() {
                       <li className="nav__item"><a href="#gallery" className="nav__link">Gallery</a></li>
                       <li className="nav__item"><a href="#menu" className="nav__link">Menu</a></li>
                       <li className="nav__item"><a href="#contact" className="nav__link">Contact</a></li>
-                      <li><i className='bx bx-moon change-theme' id="theme-button"></i></li>
+                      <li><i className={`bx ${isDarkMode ? 'bx-sun' : 'bx-moon'} change-theme`} id="theme-button" onClick={toggleTheme} style={{cursor: 'pointer'}}></i></li>
                   </ul>
               </div>
 

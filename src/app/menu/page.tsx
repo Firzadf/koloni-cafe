@@ -9,6 +9,27 @@ export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState<string>('All')
+  const [isDarkMode, setIsDarkMode] = useState(false)
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('selected-theme')
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true)
+      document.body.classList.add('dark-theme')
+    }
+  }, [])
+
+  const toggleTheme = () => {
+    const newMode = !isDarkMode
+    setIsDarkMode(newMode)
+    if (newMode) {
+      document.body.classList.add('dark-theme')
+      localStorage.setItem('selected-theme', 'dark')
+    } else {
+      document.body.classList.remove('dark-theme')
+      localStorage.setItem('selected-theme', 'light')
+    }
+  }
 
   useEffect(() => {
     async function loadMenu() {
@@ -27,7 +48,7 @@ export default function MenuPage() {
 
   return (
     <>
-      <header className="l-header" id="header" style={{ position: 'relative', background: 'white', borderBottom: '1px solid #eee' }}>
+      <header className="l-header" id="header" style={{ position: 'relative', background: 'var(--body-color)', borderBottom: '1px solid var(--container-color)' }}>
           <nav className="nav bd-container">
               <Link href="/" className="nav__logo flex items-center gap-2">
                   <img src="/assets/img/logo/koloni-logo.jpg" alt="Koloni Logo" className="h-5 w-5 object-cover rounded-full" />
@@ -37,6 +58,7 @@ export default function MenuPage() {
                   <ul className="nav__list">
                       <li className="nav__item"><Link href="/#home" className="nav__link">Home</Link></li>
                       <li className="nav__item"><Link href="/menu" className="nav__link active-link">Full Menu</Link></li>
+                      <li><i className={`bx ${isDarkMode ? 'bx-sun' : 'bx-moon'} change-theme`} id="theme-button" onClick={toggleTheme} style={{cursor: 'pointer'}}></i></li>
                   </ul>
               </div>
           </nav>
