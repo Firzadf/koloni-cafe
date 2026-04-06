@@ -81,7 +81,7 @@ export default function LandingPage() {
                       <a href="#menu" className="button">View Menu</a>
                   </div>
   
-                  <img src="/assets/img/home.png" alt="" className="home__img" />
+                  <img src="/assets/img/logo/koloni-logo.jpg" alt="Koloni Logo" className="home__img rounded-full shadow-xl mx-auto max-w-[280px] lg:max-w-[400px]" />
               </div>
           </section>
           
