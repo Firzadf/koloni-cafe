@@ -23,7 +23,7 @@ export default function MenuPage() {
 
   const filteredMenu = activeCategory === 'All' 
     ? menuItems 
-    : menuItems.filter(item => item.category === activeCategory)
+    : menuItems.filter(item => item.category?.trim().toLowerCase() === activeCategory.trim().toLowerCase())
 
   return (
     <>
