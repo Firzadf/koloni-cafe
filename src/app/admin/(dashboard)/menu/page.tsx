@@ -16,7 +16,7 @@ export default function AdminMenuPage() {
 
   // Form Data
   const [name, setName] = useState('')
-  const [category, setCategory] = useState('Food')
+  const [category, setCategory] = useState('Coffee')
   const [price, setPrice] = useState('')
   const [description, setDescription] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -64,7 +64,7 @@ export default function AdminMenuPage() {
     } else {
       setEditingId(null)
       setName('')
-      setCategory('Food')
+      setCategory('Coffee')
       setPrice('')
       setDescription('')
       setExistingImageUrl('')
@@ -190,9 +190,10 @@ export default function AdminMenuPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                   <select value={category} onChange={e => setCategory(e.target.value)} className="w-full border border-gray-300 rounded p-2 focus:outline-[var(--first-color)]">
-                    <option value="Food">Food</option>
-                    <option value="Drink">Drink</option>
-                    <option value="Dessert">Dessert</option>
+                    <option value="Coffee">Coffee</option>
+                    <option value="Non Coffee">Non Coffee</option>
+                    <option value="Ricebowl">Ricebowl</option>
+                    <option value="Snack">Snack</option>
                   </select>
                 </div>
                 <div>
