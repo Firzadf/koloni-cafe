@@ -165,6 +165,10 @@ export default function LandingPage() {
                     ))
                   )}
               </div>
+
+              <div className="text-center mt-8 pt-4">
+                  <Link href="/menu" className="button">View All Menu</Link>
+              </div>
           </section>
 
           {/*========== CONTACT US ==========*/}
@@ -177,7 +181,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="contact__button">
-                      <Link href="#" className="button">Contact us now</Link>
+                      <Link href="https://api.whatsapp.com/send/?phone=6282321710901&text&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="button">Contact us now</Link>
                   </div>
               </div>
           </section>
@@ -193,9 +197,8 @@ export default function LandingPage() {
                   </Link>
                   <span className="footer__description">Cafe & Co-working</span>
                   <div>
-                      <Link href="#" className="footer__social"><i className='bx bxl-facebook'></i></Link>
-                      <Link href="#" className="footer__social"><i className='bx bxl-instagram'></i></Link>
-                      <Link href="#" className="footer__social"><i className='bx bxl-twitter'></i></Link>
+                      <Link href="https://www.facebook.com/people/Koloni-FO/pfbid0ZAQ7G6N65pwcXfEa8zedUrJnYxhhDo7RgU1oYVZKrYYGQs1ZnbVUbn9v5zEJKFDFl/?ref=NONE_ig_profile_ac" target="_blank" rel="noopener noreferrer" className="footer__social"><i className='bx bxl-facebook'></i></Link>
+                      <Link href="https://www.instagram.com/koloniers/" target="_blank" rel="noopener noreferrer" className="footer__social"><i className='bx bxl-instagram'></i></Link>
                   </div>
               </div>
 
@@ -212,10 +215,10 @@ export default function LandingPage() {
               <div className="footer__content">
                   <h3 className="footer__title">Address</h3>
                   <ul>
-                      <li>Jakarta - Indonesia</li>
-                      <li>Jl. Koloni 123</li>
-                      <li>+62 811 2233 4455</li>
-                      <li>hello@koloni.space</li>
+                      <li>RT.01/RW.03, Situgede</li>
+                      <li>Kec. Bogor Bar., Kota Bogor</li>
+                      <li>Jawa Barat</li>
+                      <li>+62 823 2171 0901</li>
                   </ul>
               </div>
           </div>
