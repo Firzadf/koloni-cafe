@@ -48,18 +48,18 @@ export default function LandingPage() {
       {/*========== HEADER ==========*/}
       <header className="l-header" id="header">
           <nav className="nav bd-container">
-              <Link href="#" className="nav__logo flex items-center gap-2">
+              <Link href="/" className="nav__logo flex items-center gap-2">
                   <img src="/assets/img/logo/koloni-logo.jpg" alt="Koloni Logo" className="h-5 w-5 object-cover rounded-full" />
                   Koloni
               </Link>
 
               <div className="nav__menu" id="nav-menu">
                   <ul className="nav__list">
-                      <li className="nav__item"><Link href="#home" className="nav__link active-link">Home</Link></li>
-                      <li className="nav__item"><Link href="#about" className="nav__link">About</Link></li>
-                      <li className="nav__item"><Link href="#gallery" className="nav__link">Gallery</Link></li>
-                      <li className="nav__item"><Link href="#menu" className="nav__link">Menu</Link></li>
-                      <li className="nav__item"><Link href="#contact" className="nav__link">Contact</Link></li>
+                      <li className="nav__item"><a href="#home" className="nav__link active-link">Home</a></li>
+                      <li className="nav__item"><a href="#about" className="nav__link">About</a></li>
+                      <li className="nav__item"><a href="#gallery" className="nav__link">Gallery</a></li>
+                      <li className="nav__item"><a href="#menu" className="nav__link">Menu</a></li>
+                      <li className="nav__item"><a href="#contact" className="nav__link">Contact</a></li>
                       <li><i className='bx bx-moon change-theme' id="theme-button"></i></li>
                   </ul>
               </div>
@@ -78,7 +78,7 @@ export default function LandingPage() {
                       <h1 className="home__title">Koloni Food<br/>& Space</h1>
                       <h2 className="home__subtitle text-2xl font-semibold mb-2">A Hidden Escape <br/> in the Heart of Nature.</h2>
                       <p className="mb-6 text-gray-600 max-w-lg">Step away from the city's hustle and embrace the blend of subtle flavors and natural tranquility of Situgede Ecotourism.</p>
-                      <Link href="#menu" className="button">View Menu</Link>
+                      <a href="#menu" className="button">View Menu</a>
                   </div>
   
                   <img src="/assets/img/home.png" alt="" className="home__img" />
