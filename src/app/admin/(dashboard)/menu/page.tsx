@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { MenuItem } from '@/types'
 import { supabase } from '@/lib/supabaseClient'
+import { adminUploadImage, adminDeleteImage, adminSaveMenu, adminDeleteMenu } from './actions'
 
 export default function AdminMenuPage() {
   const [items, setItems] = useState<MenuItem[]>([])
@@ -37,16 +38,17 @@ export default function AdminMenuPage() {
     // Optimistic UI update
     setItems(items.filter(item => item.id !== id))
     
-    const { error } = await supabase.from('menu_items').delete().eq('id', id)
-    if (error) {
-      alert('Delete failed: ' + error.message)
-      fetchMenu() // Revert UI
-    } else {
-      // Optional: Delete image from storage if it's stored in S3/Supabase
+    try {
+      await adminDeleteMenu(id)
+      
+      // Optional: Delete image from storage
       if (imageUrl && imageUrl.includes('supabase.co')) {
         const path = imageUrl.split('/').pop()
-        if (path) supabase.storage.from('menu-images').remove([path])
+        if (path) await adminDeleteImage(path)
       }
+    } catch (error: any) {
+      alert('Delete failed: ' + error.message)
+      fetchMenu() // Revert UI
     }
   }
 
@@ -83,19 +85,12 @@ export default function AdminMenuPage() {
       if (imageFile) {
         const fileExt = imageFile.name.split('.').pop()
         const fileName = `${Math.random()}.${fileExt}`
-        const filePath = `${fileName}`
+        
+        const formData = new FormData()
+        formData.append('file', imageFile)
+        formData.append('filePath', fileName)
 
-        const { error: uploadError } = await supabase.storage
-          .from('menu-images')
-          .upload(filePath, imageFile)
-
-        if (uploadError) throw uploadError
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('menu-images')
-          .getPublicUrl(filePath)
-
-        finalImageUrl = publicUrl
+        finalImageUrl = await adminUploadImage(formData)
       }
 
       // 2. Set Fallback Image if absolutely none provided
@@ -109,15 +104,7 @@ export default function AdminMenuPage() {
         image_url: finalImageUrl
       }
 
-      if (editingId) {
-        // UPDATE Existing
-        const { error } = await supabase.from('menu_items').update(payload).eq('id', editingId)
-        if (error) throw error
-      } else {
-        // INSERT New
-        const { error } = await supabase.from('menu_items').insert(payload)
-        if (error) throw error
-      }
+      await adminSaveMenu(payload, editingId)
 
       await fetchMenu() // Refresh List
       closeModal()
